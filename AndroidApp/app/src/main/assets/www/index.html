@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MultiRun — Multi-Platform Driver Hub</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS for Maps -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">🔀</div>
+      <div class="logo-text-wrapper">
+        <h1 class="logo-text">MultiRun</h1>
+        <span class="logo-sub">Multi-Platform Driver Hub</span>
+      </div>
+    </div>
+    <div class="online-badge">
+      <div class="status-dot"></div>
+      <span>ONLINE</span>
+    </div>
+  </header>
+
+  <!-- Platform Toggles & Earnings -->
+  <section class="platform-bar">
+    <button class="platform-badge dd active" id="ddToggle" onclick="app.togglePlatform('dd')">
+      <span class="platform-dot"></span> DoorDash <span class="check">✓</span>
+    </button>
+    <button class="platform-badge ue active" id="ueToggle" onclick="app.togglePlatform('ue')">
+      <span class="platform-dot"></span> Uber Eats <span class="check">✓</span>
+    </button>
+    <div class="earnings-bar">
+      <div class="amount" id="totalEarnings">$47.20</div>
+      <div class="label">Today's Earnings</div>
+    </div>
+  </section>
+
+  <main class="content">
+    
+    <!-- Map Area -->
+    <section class="map-container">
+      <div id="map" class="map-view"></div>
+      
+      <!-- Overlays like routing info or buttons can go here -->
+      <button class="btn-navigate-all" id="navigateAllBtn" style="display:none;" onclick="app.navigateAll()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.502.502 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103zM10 1.91l-4-.8v12.98l4 .8V1.91zm1 12.98 4-.8V1.11l-4 .8v12.98zm-6-.8V1.11l-4 .8v12.98l4-.8z"/>
+        </svg>
+        Open Full Route in Maps
+      </button>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats-bar">
+      <div class="stat">
+        <div class="stat-val green" id="statDeliveries">6</div>
+        <div class="stat-lbl">Deliveries</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-val red" id="statActive">2</div>
+        <div class="stat-lbl">Active</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-val gold">4.9★</div>
+        <div class="stat-lbl">Rating</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-val grey">12m</div>
+        <div class="stat-lbl">Avg Time</div>
+      </div>
+    </section>
+
+    <!-- Accepted Orders / Active Route -->
+    <section class="accepted-panel" id="acceptedPanel" style="display: none;">
+      <div class="accepted-title">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>
+        Active Route — Optimized
+      </div>
+      <div id="acceptedStops" class="stops-list">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+    <!-- Incoming Orders -->
+    <section class="orders-section">
+      <div class="section-title">
+        <h2>Incoming Orders — Optimized Route</h2>
+        <span class="sort-tag">Closest First ↓</span>
+      </div>
+      
+      <div class="orders-list" id="ordersList">
+        <!-- Populated by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div class="nav-item active" onclick="app.switchTab(this)">
+      <div class="nav-icon">🗺️</div>
+      <span class="nav-lbl">Orders</span>
+    </div>
+    <div class="nav-item" onclick="app.switchTab(this)">
+      <div class="nav-icon">📊</div>
+      <span class="nav-lbl">Earnings</span>
+    </div>
+    <div class="nav-item" onclick="app.switchTab(this)">
+      <div class="nav-icon">🧭</div>
+      <span class="nav-lbl">Navigate</span>
+    </div>
+    <div class="nav-item" onclick="app.switchTab(this)">
+      <div class="nav-icon">⚙️</div>
+      <span class="nav-lbl">Settings</span>
+    </div>
+  </nav>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast">Notification</div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  
+  <!-- App Scripts -->
+  <script src="js/map.js"></script>
+  <script src="js/orders.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

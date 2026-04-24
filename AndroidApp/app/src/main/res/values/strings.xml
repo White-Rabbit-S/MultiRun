@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MultiRun</string>
+    <string name="accessibility_description">Allows MultiRun to read delivery addresses directly from DoorDash and Uber Eats so it can automatically route your multi-stops.</string>
+</resources>
